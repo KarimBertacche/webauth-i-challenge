@@ -4,11 +4,11 @@ const db = require('./auth-model');
 
 router.post('/register', checkBodyCredentials, async (req, res) => {
     try {
-        let user = req.body;
+        let { username, password } = req.body;
 
-        password = bcrypt.hashSync(user.password, 12);
+        password = bcrypt.hashSync(password, 12);
 
-        const user = await db.add(user);
+        const user = await db.add({ username, password });
 
         res.status(201).json(user);
 
@@ -21,7 +21,7 @@ router.post('/register', checkBodyCredentials, async (req, res) => {
 
 router.post('/login', checkBodyCredentials, async (req, res) => {
     try {
-        let {username, password} = req.body;
+        let { username, password } = req.body;
         
         const user = await db.findBy({ username });
 
