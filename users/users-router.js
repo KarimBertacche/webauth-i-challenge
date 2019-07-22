@@ -38,7 +38,7 @@ async function restricted(req, res, next) {
 
     } catch(error) {
         res.status(500).json({
-            message: 'Server error while validating user'
+            message: 'You shall not pass! /n Server error while validating user'
         });
     }
 }
