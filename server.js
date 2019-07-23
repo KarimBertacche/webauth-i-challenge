@@ -4,6 +4,8 @@ const usersRouter = require('./users/users-router');
 const session = require('express-session');
 const KnexSessionStore = require('connect-session-knex')(session);
 
+const restrictedPath = require('./middlewares/restrictedRoutes-middleware');
+
 server = express();
 
 server.use(express.json());
@@ -27,7 +29,8 @@ server.use(session({
 }));
 
 server.use('/api', authRouter);
-server.use('/api/users', usersRouter);
+// server.use();
+server.use('/api/restricted', restrictedPath, usersRouter);
 
 server.get('/', (req, res) => {
     res.send('The server is up and running just fine!')

@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 const db = require('./auth-model');
-const checkBodyCredentials = require('./checkBodyCredential-middleware');
+const checkBodyCredentials = require('../middlewares/checkBodyCredential-middleware');
 
 router.post('/register', checkBodyCredentials, async (req, res) => {
     try {
