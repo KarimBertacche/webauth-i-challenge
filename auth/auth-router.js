@@ -21,6 +21,24 @@ router.post('/register', checkBodyCredentials, async (req, res) => {
     }
 });
 
+router.get('/logout', (req, res) => {
+    if(req.session) {
+        req.session.destroy(error => {
+            if(error) {
+                res.status(400).json({
+                    message: 'Logged out negated, you shall never leave 😈🔥'
+                });
+            } else {
+                res.status(200).json({
+                    message: 'You have successfully logged out, good bye'
+                });
+            }
+        });
+    } else {
+        res.end();
+    }
+});
+
 router.post('/login', checkBodyCredentials, async (req, res) => {
     try {
         let { username, password } = req.body;
