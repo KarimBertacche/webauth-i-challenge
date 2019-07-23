@@ -29,7 +29,6 @@ server.use(session({
 }));
 
 server.use('/api', authRouter);
-// server.use();
 server.use('/api/restricted', restrictedPath, usersRouter);
 
 server.get('/', (req, res) => {

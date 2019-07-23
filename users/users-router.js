@@ -2,7 +2,7 @@ const router = require('express').Router();
 const db = require('./users-model');
 const restricted = require('../middlewares/restricted-middleware');
 
-router.get('/users', [restricted], async (req, res) => {
+router.get('/users', restricted, async (req, res) => {
     try {
         const users = await db.find();
 
