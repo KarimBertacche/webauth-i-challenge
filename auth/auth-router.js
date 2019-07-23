@@ -1,13 +1,12 @@
 const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 const db = require('./auth-model');
+const checkBodyCredentials = require('./checkBodyCredential-middleware');
 
 router.post('/register', checkBodyCredentials, async (req, res) => {
     try {
         let { username, password } = req.body;
 
-        // let randomSalt = new Date().getTime();
-        // password = md5(`${password}${randomSalt}`) + `$${randomSalt}`
         password = bcrypt.hashSync(password, 12);
 
         const user = await db.add({ username, password });
@@ -17,6 +16,31 @@ router.post('/register', checkBodyCredentials, async (req, res) => {
     } catch(error) {
         res.status(500).json({
             message: 'Server error while registering'
+        });
+    }
+});
+
+
+router.post('/login', checkBodyCredentials, async (req, res) => {
+    try {
+        let { username, password } = req.body;
+        
+        const user = await db.findBy({ username });
+        
+        if(user && bcrypt.compareSync(password, user.password)) {
+            req.session.user = user;
+            res.status(200).json({
+                message: `Welcome ${user.username}!`
+            });
+        } else {
+            res.status(400).json({
+                message: 'Invalid Credentials'
+            });
+        }
+        
+    } catch(error) {
+        res.status(500).json({
+            message: 'You shall not pass!!🧙‍♂️ /n Server error while login user'
         });
     }
 });
@@ -38,48 +62,5 @@ router.get('/logout', (req, res) => {
         res.end();
     }
 });
-
-router.post('/login', checkBodyCredentials, async (req, res) => {
-    try {
-        let { username, password } = req.body;
-        
-        const user = await db.findBy({ username });
-
-        if(user && bcrypt.compareSync(password, user.password)) {
-            req.session.user = user;
-            res.status(200).json({
-                message: `Welcome ${user.username}!`
-            });
-        } else {
-            res.status(400).json({
-                message: 'Invalid Credentials'
-            });
-        }
-
-    } catch(error) {
-        res.status(500).json({
-            message: 'You shall not pass!!🧙‍♂️ /n Server error while login user'
-        });
-    }
-});
-
-async function checkBodyCredentials(req, res, next) {
-    try {
-        let {username, password} = req.body;
-
-        if(username && password) {
-            next();
-        } else {
-            res.status(404).json({
-                message: 'Missing Credentials'
-            });
-        }
-
-    } catch(error) {
-        res.status(500).json({
-            message: 'You shall not pass!!🧙‍♂️'
-        });
-    }
-}
 
 module.exports = router;
