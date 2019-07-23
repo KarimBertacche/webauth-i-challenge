@@ -6,6 +6,8 @@ router.post('/register', checkBodyCredentials, async (req, res) => {
     try {
         let { username, password } = req.body;
 
+        // let randomSalt = new Date().getTime();
+        // password = md5(`${password}${randomSalt}`) + `$${randomSalt}`
         password = bcrypt.hashSync(password, 12);
 
         const user = await db.add({ username, password });
@@ -26,6 +28,7 @@ router.post('/login', checkBodyCredentials, async (req, res) => {
         const user = await db.findBy({ username });
 
         if(user && bcrypt.compareSync(password, user.password)) {
+            req.session.user = user;
             res.status(200).json({
                 message: `Welcome ${user.username}!`
             });
